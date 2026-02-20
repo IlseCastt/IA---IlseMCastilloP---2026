@@ -1,15 +1,22 @@
-package puzzle24;
+package puzzle8;
 
 public class Main {
-
     public static void main(String[] args) {
+        String estadoI = "853624 17";
+        String estadoF = "12345678 ";
 
-        String estadoI = "123456789ABC EFGHDJKLMINO"; 
-        String estadoF = "123456789ABCDEFGHIJKLMNO ";
+        SolucionPuzzle solucion = new SolucionPuzzle(estadoI, estadoF);
 
-        SolucionPuzzle24 solucion = new SolucionPuzzle24(estadoI, estadoF);
+        System.out.println("INICIANDO BUSQUEDA EN ANCHURA (BFS)");
+        solucion.busquedaAnchura();
 
-        System.out.println("INICIANDO BUSQUEDA EN HEURÍSTICA");
-        solucion.busquedaHeuristica();
+        //System.out.println("INICIANDO BUSQUEDA EN PROFUNDIDAD (DFS)");
+        //solucion.busquedaProfundidad();
+
+        //System.out.println("INICIANDO BÚSQUEDA HEURÍSTICA");
+        //solucion.busquedaHeuristica();
+
+        //System.out.println("INICIANDO BÚSQUEDA COSTO UNIFORME");
+        //solucion.busquedaCostoUniforme();
     }
 }
