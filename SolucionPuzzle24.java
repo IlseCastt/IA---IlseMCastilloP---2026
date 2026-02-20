@@ -1,0 +1,155 @@
+package puzzle24;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Set;
+
+public class SolucionPuzzle24 {
+    public String estadoI;
+    public String estadoF;
+
+    public SolucionPuzzle24(String estadoI, String estadoF) {
+        this.estadoI = estadoI;
+        this.estadoF = estadoF;
+    }
+
+    public void busquedaHeuristica() {
+        PriorityQueue<Nodo> colaPrioridad = new PriorityQueue<>();
+        Set<String> visitados = new HashSet<>();
+
+        int hInicial = calcularManhattan(estadoI);
+        Nodo inicial = new Nodo(estadoI, null, "Inicio", 0, 0 + hInicial);
+
+        colaPrioridad.add(inicial);
+        visitados.add(estadoI);
+        int nodosExplorados = 0;
+
+        while (!colaPrioridad.isEmpty()) {
+            Nodo nodoActual = colaPrioridad.poll();
+            nodosExplorados++;
+
+            if (nodoActual.estado.equals(estadoF)) {
+                System.out.println("¡SOLUCIÓN ENCONTRADA EN " + nodoActual.nivel + " MOVIMIENTOS!");
+                System.out.println("Nodos explorados por A*: " + nodosExplorados);
+                imprimirSolucion(nodoActual);
+                return;
+            }
+
+            List<Nodo> hijos = generarHijos(nodoActual);
+
+            for(int i = 0; i < hijos.size(); i++){
+                if(!visitados.contains(hijos.get(i).estado)){ 
+                    visitados.add(hijos.get(i).estado); 
+                    
+                    int g = hijos.get(i).nivel;
+                    int h = calcularManhattan(hijos.get(i).estado); // Usamos Manhattan
+                    hijos.get(i).costoF = g + h;
+
+                    colaPrioridad.add(hijos.get(i));
+                    
+                }
+            }
+        }
+        System.out.println("Búsqueda terminada: Este tablero NO tiene solución.");
+    }
+
+    //DISTANCIA DE MANHATTAN ADAPTADA AL 5x5
+    private int calcularManhattan(String estadoActual) {
+        int costoTotal = 0;
+
+        for (int i = 0; i < 25; i++) {
+            char pieza = estadoActual.charAt(i);
+            
+            if (pieza != ' ') {
+                // Buscamos dónde debería estar esta pieza en la meta
+                int indiceMeta = estadoF.indexOf(pieza);
+                
+                // Fórmulas matemáticas para sacar fila y columna en un grid 5x5
+                int filaActual = i / 5;
+                int colActual = i % 5;
+                int filaMeta = indiceMeta / 5;
+                int colMeta = indiceMeta % 5;
+                
+                // Sumamos la distancia vertical y la horizontal
+                costoTotal += Math.abs(filaActual - filaMeta) + Math.abs(colActual - colMeta);
+            }
+        }
+        return costoTotal;
+    }
+
+    //
+    private List<Nodo> generarHijos(Nodo nodoActual) {
+        List<Nodo> hijos = new ArrayList<>();
+        String estado = nodoActual.estado;
+        int posVacia = estado.indexOf(" ");
+
+        // Arriba (-5 posiciones)
+        if (posVacia >= 5) {
+            hijos.add(new Nodo(intercambiarPos(estado, posVacia, posVacia - 5), nodoActual, "Arriba", nodoActual.nivel + 1, 0));
+        }
+        // Abajo (+5 posiciones). El límite inferior es la fila que empieza en 20
+        if (posVacia <= 19) {
+            hijos.add(new Nodo(intercambiarPos(estado, posVacia, posVacia + 5), nodoActual, "Abajo", nodoActual.nivel + 1, 0));
+        }
+        // Izquierda (-1 posición). Múltiplos de 5 son la columna izquierda (0, 5, 10, 15, 20)
+        if (posVacia % 5 != 0) {
+            hijos.add(new Nodo(intercambiarPos(estado, posVacia, posVacia - 1), nodoActual, "Izquierda", nodoActual.nivel + 1, 0));
+        }
+        // Derecha (+1 posición). (4, 9, 14, 19, 24) son la columna derecha
+        if (posVacia % 5 != 4) {
+            hijos.add(new Nodo(intercambiarPos(estado, posVacia, posVacia + 1), nodoActual, "Derecha", nodoActual.nivel + 1, 0));
+        }
+
+        return hijos;
+    }
+
+    private String intercambiarPos(String estado, int pos1, int pos2) {
+        char[] caracteres = estado.toCharArray();
+        char temporal = caracteres[pos1];
+        caracteres[pos1] = caracteres[pos2];
+        caracteres[pos2] = temporal;
+        return new String(caracteres);
+    }
+
+    private void imprimirSolucion(Nodo nodo) {
+        List<Nodo> movimientos = new ArrayList<>();
+        Nodo nodoAct = nodo;
+
+        while (nodoAct != null) {
+            movimientos.add(nodoAct);
+            nodoAct = nodoAct.padre;
+        }
+
+        System.out.println("\nPasos para resolver el Puzzle 24:");
+        for (int i = movimientos.size() - 1; i >= 0; i--) {
+            Nodo paso = movimientos.get(i);
+            System.out.println("Movimiento: " + paso.movimiento);
+            imprimirTablero5x5(paso.estado);
+            System.out.println("---------");
+        }
+    }
+
+    private void imprimirTablero5x5(String estado) {
+        for (int i = 0; i < 25; i++) {
+            char c = estado.charAt(i);
+            String valorAImprimir;
+
+            if (c == ' ') {
+                valorAImprimir = "  "; 
+            } else if (c >= 'A' && c <= 'O') {
+                int numeroReal = (c - 'A') + 10;
+                valorAImprimir = String.valueOf(numeroReal);
+            } else {
+                valorAImprimir = " " + c; 
+            }
+
+            System.out.print("[" + valorAImprimir + "] ");
+            if ((i + 1) % 5 == 0) {
+                System.out.println();
+            }
+        }
+    }
+}
+    
