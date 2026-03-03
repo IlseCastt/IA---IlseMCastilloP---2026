@@ -1,7 +1,6 @@
 package puzzle8;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +19,9 @@ public class SolucionPuzzle {
     }
 
     public void busquedaAnchura() {
+        long tiempoInicio = System.currentTimeMillis(); //se registra el tiempo de inicio para medir el tiempo de ejecución
+        int nodosExplorados = 0; //contador para nodos explorados
+
         Queue<Nodo> cola = new LinkedList<>();
         Set<String> visitados = new HashSet<>();
 
@@ -33,11 +35,15 @@ public class SolucionPuzzle {
         //mientras la cola no este vacia, se sigue explorando nodos
         while(!cola.isEmpty()){
             Nodo nodoActual = cola.poll();
+            nodosExplorados++; //se incrementa el contador de nodos explorados cada vez que se saca un nodo de la cola
 
             if(nodoActual.estado.equals(estadoF)){
                 //si se encuentra el estado final, se imprime la solucion
                 imprimirSolucion(nodoActual);
+                long tiempoFin = System.currentTimeMillis(); //se registra el tiempo de fin para medir el tiempo de ejecución
                 System.out.println("Solución encontrada en " + nodoActual.nivel + " movimientos:");
+                System.out.println("Nodos explorados: " + nodosExplorados);
+                System.out.println("Tiempo de ejecución: " + (tiempoFin - tiempoInicio) + " ms");
                 return;
             } else { //si aun no se encuentra el estado final, se generan mas nodos
                 List<Nodo> hijos = generarHijos(nodoActual);
@@ -51,10 +57,14 @@ public class SolucionPuzzle {
             }
         }
 
+        long tiempoFin = System.currentTimeMillis(); //se registra el tiempo de fin para medir el tiempo de ejecución
         System.out.println("No se encontró solución"); //esto si el while termina y nunca se hizo return
     }
     
     public void busquedaProfundidad() {
+        long tiempoInicio = System.currentTimeMillis(); // Inicia temporizador
+        int nodosExplorados = 0; // Inicia contador
+
         Stack<Nodo> pila = new Stack<>();
         Set<String> visitados = new HashSet<>();
 
@@ -66,11 +76,15 @@ public class SolucionPuzzle {
         //mientras la pila no este vacia, se sigue explorando nodos
         while(!pila.isEmpty()){
             Nodo nodoActual = pila.pop();
+            nodosExplorados++; // Incrementa contador
 
             if(nodoActual.estado.equals(estadoF)){
+                long tiempoFin = System.currentTimeMillis(); // Detiene temporizador
                 //si se encuentra el estado final, se imprime la solucion
                 imprimirSolucion(nodoActual);
                 System.out.println("Solución encontrada en " + nodoActual.nivel + " movimientos:");
+                System.out.println("Nodos explorados: " + nodosExplorados);
+                System.out.println("Tiempo de ejecución: " + (tiempoFin - tiempoInicio) + " ms");
                 return;
             } else { //si aun no se encuentra el estado final, se generan mas nodos
                 List<Nodo> hijos = generarHijos(nodoActual);
@@ -84,6 +98,7 @@ public class SolucionPuzzle {
             }
         }
 
+        long tiempoFin = System.currentTimeMillis(); // Detiene temporizador
         System.out.println("No se encontró solución"); //esto si el while termina y nunca se hizo return
 
     }
@@ -104,6 +119,9 @@ public class SolucionPuzzle {
     }
 
     public void busquedaHeuristica() {
+        long tiempoInicio = System.currentTimeMillis(); // Inicia temporizador
+        int nodosExplorados = 0; // Inicia contador
+
         PriorityQueue<Nodo> colaPrioridad = new PriorityQueue<>(); //PriorityQueue los ordena automáticamente
         Set<String> visitados = new HashSet<>();
 
@@ -115,10 +133,14 @@ public class SolucionPuzzle {
 
         while (!colaPrioridad.isEmpty()) {
             Nodo nodoActual = colaPrioridad.poll(); //.poll() sacará automáticamente al nodo con el menor costoF
+            nodosExplorados++; // Incrementa contador
 
             if (nodoActual.estado.equals(estadoF)) {
+                long tiempoFin = System.currentTimeMillis(); // Detiene temporizador
                 imprimirSolucion(nodoActual);
                 System.out.println("Solución encontrada por Heurística en " + nodoActual.nivel + " movimientos:");
+                System.out.println("Nodos explorados: " + nodosExplorados);
+                System.out.println("Tiempo de ejecución: " + (tiempoFin - tiempoInicio) + " ms");
                 return;
             } 
             
@@ -138,10 +160,14 @@ public class SolucionPuzzle {
             }
         }
         
+        long tiempoFin = System.currentTimeMillis(); // Detiene temporizador
         System.out.println("Búsqueda Heurística terminada: Este tablero NO tiene solución");
     }
 
     public void busquedaCostoUniforme() {  
+            long tiempoInicio = System.currentTimeMillis(); // Inicia temporizador
+            int nodosExplorados = 0; // Inicia contador
+
             PriorityQueue<Nodo> cola = new PriorityQueue<>();
             Set<String> visitados = new HashSet<>();
 
@@ -149,16 +175,17 @@ public class SolucionPuzzle {
             
             cola.add(inicial);
             visitados.add(estadoI);
-            int nodosExplorados = 0;
 
             while (!cola.isEmpty()) {
                 Nodo nodoActual = cola.poll();
                 nodosExplorados++; 
 
                 if (nodoActual.estado.equals(estadoF)) {
+                    long tiempoFin = System.currentTimeMillis(); // Detiene temporizador
                     imprimirSolucion(nodoActual);
                     System.out.println("Solucion encontrada en " + nodoActual.nivel + " movimientos!");
                     System.out.println("Nodos explorados: " + nodosExplorados);
+                    System.out.println("Tiempo de ejecución: " + (tiempoFin - tiempoInicio) + " ms");
                     return;
                 } else {
                     List<Nodo> hijos = generarHijos(nodoActual);
@@ -174,6 +201,8 @@ public class SolucionPuzzle {
                     }
                 }
             }
+
+            long tiempoFin = System.currentTimeMillis(); // Detiene temporizador
             System.out.println("Este tablero NO tiene solución");
         }
 
