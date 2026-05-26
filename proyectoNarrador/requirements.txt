@@ -1,0 +1,18 @@
+# --- Interfaz ---
+streamlit>=1.30
+
+# --- Visión / Video ---
+opencv-python-headless>=4.8
+Pillow>=10.0
+
+# --- Deep Learning core ---
+torch>=2.1
+accelerate>=0.27
+
+# --- Modelos de Hugging Face ---
+transformers>=4.40
+sentence-transformers>=2.7
+
+# --- Audio ---
+scipy>=1.11
+numpy>=1.24
